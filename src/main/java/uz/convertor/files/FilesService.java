@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -60,26 +61,14 @@ public class FilesService {
 
             String extension = FileUtils.getExtensionFromFileName(file.getFile_name());
             switch (extension.toLowerCase()) {
-                case "pdf":
-                    headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
-                    break;
-                case "zip":
-                    headers.add(HttpHeaders.CONTENT_TYPE, "application/zip");
-                    break;
-                case "jpeg":
-                    headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg");
-                    break;
-                case "png":
-                    headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
-                    break;
-                case "doc":
-                    headers.add(HttpHeaders.CONTENT_TYPE, "application/msword");
-                    break;
-                case "docx":
-                    headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-                    break;
-                default:
-                    headers.add(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
+                case "pdf" -> headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
+                case "zip" -> headers.add(HttpHeaders.CONTENT_TYPE, "application/zip");
+                case "jpeg" -> headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg");
+                case "png" -> headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
+                case "doc" -> headers.add(HttpHeaders.CONTENT_TYPE, "application/msword");
+                case "docx" ->
+                        headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                default -> headers.add(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
             }
             return new ResponseEntity<>(fileAsResource, headers, HttpStatus.OK);
         } catch (Exception e) {
@@ -111,5 +100,22 @@ public class FilesService {
 
     public void delete(String id) {
         this.fileDtoList.stream().filter(o -> Objects.equals(o.getFile_id(), id)).findFirst().ifPresent(fileDto -> this.fileDtoList.remove(fileDto));
+    }
+
+    public void deleteAllFiles() {
+        System.out.println("fileDtoList.size() = " + fileDtoList.size());
+        for (FileDto fileDto : fileDtoList) {
+            deleteFile(fileDto.getFile_name());
+        }
+        fileDtoList.removeAll(new ArrayList<>(fileDtoList));
+    }
+
+    private void deleteFile(String path) {
+        File file = new File(path);
+        if (file.delete()) {
+            System.out.println("Deleted the file: " + file.getName());
+        } else {
+            System.out.println("Failed to delete the file.");
+        }
     }
 }
