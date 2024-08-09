@@ -18,6 +18,8 @@
 
     <properties>
         <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
     </properties>
 
     <repositories>
@@ -26,11 +28,11 @@
             <name>Aspose Java API</name>
             <url>https://repository.aspose.com/repo/</url>
         </repository>
-        <repository>
-            <id>repository.groupdocs.com</id>
-            <name>GroupDocs Repository</name>
-            <url>https://releases.groupdocs.com/java/repo/</url>
-        </repository>
+<!--        <repository>-->
+<!--            <id>repository.groupdocs.com</id>-->
+<!--            <name>GroupDocs Repository</name>-->
+<!--            <url>https://releases.groupdocs.com/java/repo/</url>-->
+<!--        </repository>-->
     </repositories>
 
     <dependencies>
@@ -39,11 +41,11 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
 
-        <dependency>
-            <groupId>com.groupdocs</groupId>
-            <artifactId>groupdocs-conversion</artifactId>
-            <version>24.2</version>
-        </dependency>
+<!--        <dependency>-->
+<!--            <groupId>com.groupdocs</groupId>-->
+<!--            <artifactId>groupdocs-conversion</artifactId>-->
+<!--            <version>24.2</version>-->
+<!--        </dependency>-->
 
         <dependency>
             <groupId>com.aspose</groupId>
