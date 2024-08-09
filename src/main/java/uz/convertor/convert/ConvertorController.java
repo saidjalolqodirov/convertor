@@ -30,10 +30,14 @@ public class ConvertorController {
                                     @RequestParam FileType toType,
                                     HttpServletRequest request,
                                     HttpServletResponse response) {
+
+        String cookie;
         if (request.getCookies() == null) {
-            setCookie(response);
+            cookie = setCookie(request, response);
+        } else {
+            cookie = getSessionId(request);
         }
-        return convertorService.convert(request.getSession() == null ? "1" : request.getSession().getId(), multipartFile, fromType, toType);
+        return convertorService.convert(cookie, multipartFile, fromType, toType);
     }
 
     @GetMapping("/download/{id}")
@@ -42,8 +46,7 @@ public class ConvertorController {
     }
 
     @GetMapping("/type_list")
-    public FileType[] typeList(HttpServletResponse response) {
-        setCookie(response);
+    public FileType[] typeList() {
         return FileType.values();
     }
 
@@ -88,14 +91,23 @@ public class ConvertorController {
         filesService.delete(id);
     }
 
-    @GetMapping("/setCookie")
-    public String setCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie("sessionId", UUID.randomUUID().toString());
-        cookie.setMaxAge(60 * 60 * 24);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        response.addCookie(cookie);
-        return "Cookie set successfully!";
+    public String setCookie(HttpServletRequest request, HttpServletResponse response) {
+        if (request.getCookies() == null || request.getCookies().length == 0 || getSessionId(request).isEmpty()) {
+            String cookieValue = UUID.randomUUID().toString();
+            Cookie cookie = new Cookie("sessionId", cookieValue);
+            cookie.setPath("/");
+            response.addCookie(cookie);
+            return cookieValue;
+        }
+        return null;
+    }
+
+    private String getSessionId(HttpServletRequest request) {
+        for (Cookie cookie : request.getCookies()) {
+            if (cookie.getName().equals("sessionId")) {
+                return cookie.getValue();
+            }
+        }
+        return "";
     }
 }
