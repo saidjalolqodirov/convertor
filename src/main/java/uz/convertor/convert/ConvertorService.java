@@ -29,12 +29,12 @@ import java.util.zip.ZipOutputStream;
 @RequiredArgsConstructor
 public class ConvertorService {
     private final FilesService filesService;
-    private static String remoteAddress = "";
+    private static String sessionId = "";
 
-    public ResponseEntity<?> convert(String remoteAddr, MultipartFile multipartFile, FileType fromType, FileType toType) {
+    public ResponseEntity<?> convert(String sessionId, MultipartFile multipartFile, FileType fromType, FileType toType) {
         if (!check(multipartFile, fromType, toType))
             return new ResponseEntity<>("File Type error", HttpStatus.BAD_REQUEST);
-        remoteAddress = remoteAddr;
+        sessionId = sessionId;
         switch (toType) {
             case PDF: {
                 switch (fromType) {
@@ -511,6 +511,6 @@ public class ConvertorService {
     private FileDto uploadFile(String extension, FileType fromType, String originalFilename) {
         String id = UUID.randomUUID().toString();
         String filePath = filesService.getPathForUpload() + "/" + id + extension;
-        return new FileDto(id, fromType, originalFilename, filePath, filesService.size() + 1, remoteAddress);
+        return new FileDto(id, fromType, originalFilename, filePath, filesService.size() + 1, sessionId);
     }
 }

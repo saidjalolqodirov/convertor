@@ -25,8 +25,8 @@ public class ConvertorController {
     public ResponseEntity<?> upload(@RequestParam(name = "file") MultipartFile multipartFile,
                                     @RequestParam FileType fromType,
                                     @RequestParam FileType toType,
-                                    HttpServletRequest httpServletRequest) {
-        return convertorService.convert(httpServletRequest.getRemoteAddr(), multipartFile, fromType, toType);
+                                    HttpServletRequest request) {
+        return convertorService.convert(request.getSession() == null ? "1" : request.getSession().getId(), multipartFile, fromType, toType);
     }
 
     @GetMapping("/download/{id}")
@@ -41,30 +41,30 @@ public class ConvertorController {
 
     @GetMapping("/convert_files_list")
     public List<FileDto> convertFilesList(HttpServletRequest request) {
-        return filesService.getList(request.getRemoteAddr());
+        return filesService.getList(request.getSession() == null ? "1" : request.getSession().getId());
     }
 
     @GetMapping("/access_type_list_by_type")
     public FileType[] typeList(@RequestParam FileType fileType) {
         switch (fileType) {
             case DWG: {
-                return new FileType[]{FileType.DXF, FileType.PDF, FileType.PNG, FileType.JPEG,FileType.JPG};
+                return new FileType[]{FileType.DXF, FileType.PDF, FileType.PNG, FileType.JPEG, FileType.JPG};
             }
             case DXF: {
-                return new FileType[]{FileType.DWG, FileType.PDF, FileType.PNG, FileType.JPEG,FileType.JPG};
+                return new FileType[]{FileType.DWG, FileType.PDF, FileType.PNG, FileType.JPEG, FileType.JPG};
             }
             case PDF: {
-                return new FileType[]{FileType.PNG, FileType.JPEG,FileType.JPG, FileType.DOC, FileType.DOCX};
+                return new FileType[]{FileType.PNG, FileType.JPEG, FileType.JPG, FileType.DOC, FileType.DOCX};
             }
             case PNG: {
-                return new FileType[]{FileType.PDF, FileType.JPEG,FileType.JPG, FileType.DOC, FileType.DOCX};
+                return new FileType[]{FileType.PDF, FileType.JPEG, FileType.JPG, FileType.DOC, FileType.DOCX};
             }
             case JPEG:
             case JPG: {
                 return new FileType[]{FileType.PDF, FileType.PNG, FileType.DOC, FileType.DOCX};
             }
             case DOC: {
-                return new FileType[]{FileType.PDF, FileType.PNG, FileType.JPEG,FileType.JPG, FileType.DOCX};
+                return new FileType[]{FileType.PDF, FileType.PNG, FileType.JPEG, FileType.JPG, FileType.DOCX};
             }
             case DOCX: {
                 return new FileType[]{FileType.PDF, FileType.PNG, FileType.JPEG, FileType.JPG, FileType.DOC};

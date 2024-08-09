@@ -17,7 +17,7 @@ public class FileDto {
     private String original_file_name;
     private String file_name;
     private Integer order = 1;
-    private String remoteAddress;
+    private String sessionId;
 
     @Override
     public boolean equals(Object o) {

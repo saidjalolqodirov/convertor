@@ -29,9 +29,9 @@ public class FilesService {
         this.fileDtoList.add(fileDto);
     }
 
-    public List<FileDto> getList(String remoteAddr) {
+    public List<FileDto> getList(String sessionId) {
         return fileDtoList.stream()
-                .filter(fileDto -> Objects.equals(remoteAddr, fileDto.getRemoteAddress()))
+                .filter(fileDto -> Objects.equals(sessionId, fileDto.getSessionId()))
                 .sorted((o1, o2) -> o2.getOrder() - o1.getOrder()).collect(Collectors.toList());
     }
 
