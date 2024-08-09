@@ -28,16 +28,9 @@ public class ConvertorController {
     public ResponseEntity<?> upload(@RequestParam(name = "file") MultipartFile multipartFile,
                                     @RequestParam FileType fromType,
                                     @RequestParam FileType toType,
-                                    HttpServletRequest request,
-                                    HttpServletResponse response) {
+                                    HttpServletRequest request) {
 
-        String cookie;
-        if (request.getCookies() == null) {
-            cookie = setCookie(request, response);
-        } else {
-            cookie = getSessionId(request);
-        }
-        return convertorService.convert(cookie, multipartFile, fromType, toType);
+        return convertorService.convert(request.getRemoteAddr(), multipartFile, fromType, toType);
     }
 
     @GetMapping("/download/{id}")
@@ -52,7 +45,7 @@ public class ConvertorController {
 
     @GetMapping("/convert_files_list")
     public List<FileDto> convertFilesList(HttpServletRequest request) {
-        return filesService.getList(request.getCookies() == null ? "" : getSessionId(request));
+        return filesService.getList(request.getRemoteAddr());
     }
 
     @GetMapping("/access_type_list_by_type")
@@ -91,23 +84,22 @@ public class ConvertorController {
         filesService.delete(id);
     }
 
-    public String setCookie(HttpServletRequest request, HttpServletResponse response) {
-        if (request.getCookies() == null || request.getCookies().length == 0 || getSessionId(request).isEmpty()) {
-            String cookieValue = UUID.randomUUID().toString();
-            Cookie cookie = new Cookie("sessionId", cookieValue);
-            cookie.setPath("/");
-            response.addCookie(cookie);
-            return cookieValue;
-        }
-        return null;
-    }
-
-    private String getSessionId(HttpServletRequest request) {
-        for (Cookie cookie : request.getCookies()) {
-            if (cookie.getName().equals("sessionId")) {
-                return cookie.getValue();
-            }
-        }
-        return "";
-    }
+//    public String setCookie(HttpServletRequest request, HttpServletResponse response) {
+//        if (request.getCookies() == null || request.getCookies().length == 0 || getSessionId(request).isEmpty()) {
+//            String cookieValue = UUID.randomUUID().toString();
+//            Cookie cookie = new Cookie("sessionId", cookieValue);
+//            cookie.setPath("/");
+//            response.addCookie(cookie);
+//            return cookieValue;
+//        }
+//        return null;
+//    }
+//    private String getSessionId(HttpServletRequest request) {
+//        for (Cookie cookie : request.getCookies()) {
+//            if (cookie.getName().equals("sessionId")) {
+//                return cookie.getValue();
+//            }
+//        }
+//        return "";
+//    }
 }
