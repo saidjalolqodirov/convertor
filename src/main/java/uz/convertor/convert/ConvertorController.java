@@ -52,7 +52,7 @@ public class ConvertorController {
 
     @GetMapping("/convert_files_list")
     public List<FileDto> convertFilesList(HttpServletRequest request) {
-        return filesService.getList(request.getSession() == null ? "1" : request.getSession().getId());
+        return filesService.getList(getSessionId(request));
     }
 
     @GetMapping("/access_type_list_by_type")
