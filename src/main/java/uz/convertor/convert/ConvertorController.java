@@ -48,25 +48,26 @@ public class ConvertorController {
     public FileType[] typeList(@RequestParam FileType fileType) {
         switch (fileType) {
             case DWG: {
-                return new FileType[]{FileType.DXF, FileType.PDF, FileType.PNG, FileType.JPEG};
+                return new FileType[]{FileType.DXF, FileType.PDF, FileType.PNG, FileType.JPEG,FileType.JPG};
             }
             case DXF: {
-                return new FileType[]{FileType.DWG, FileType.PDF, FileType.PNG, FileType.JPEG};
+                return new FileType[]{FileType.DWG, FileType.PDF, FileType.PNG, FileType.JPEG,FileType.JPG};
             }
             case PDF: {
-                return new FileType[]{FileType.PNG, FileType.JPEG, FileType.DOC, FileType.DOCX};
+                return new FileType[]{FileType.PNG, FileType.JPEG,FileType.JPG, FileType.DOC, FileType.DOCX};
             }
             case PNG: {
-                return new FileType[]{FileType.PDF, FileType.JPEG, FileType.DOC, FileType.DOCX};
+                return new FileType[]{FileType.PDF, FileType.JPEG,FileType.JPG, FileType.DOC, FileType.DOCX};
             }
-            case JPEG: {
+            case JPEG:
+            case JPG: {
                 return new FileType[]{FileType.PDF, FileType.PNG, FileType.DOC, FileType.DOCX};
             }
             case DOC: {
-                return new FileType[]{FileType.PDF, FileType.PNG, FileType.JPEG, FileType.DOCX};
+                return new FileType[]{FileType.PDF, FileType.PNG, FileType.JPEG,FileType.JPG, FileType.DOCX};
             }
             case DOCX: {
-                return new FileType[]{FileType.PDF, FileType.PNG, FileType.JPEG, FileType.DOC};
+                return new FileType[]{FileType.PDF, FileType.PNG, FileType.JPEG, FileType.JPG, FileType.DOC};
             }
             default: {
                 return new FileType[]{};

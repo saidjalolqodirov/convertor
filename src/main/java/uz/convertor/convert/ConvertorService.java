@@ -39,6 +39,7 @@ public class ConvertorService {
             case PDF: {
                 switch (fromType) {
                     case JPEG:
+                    case JPG:
                     case PNG: {
                         return ResponseEntity.ok(convertToPdpFromImage(multipartFile, fromType));
                     }
@@ -56,7 +57,8 @@ public class ConvertorService {
             }
             case PNG: {
                 switch (fromType) {
-                    case JPEG: {
+                    case JPEG:
+                    case JPG: {
                         return ResponseEntity.ok(convertToPngFromJpeg(multipartFile, fromType));
                     }
                     case PDF: {
@@ -72,7 +74,8 @@ public class ConvertorService {
                     }
                 }
             }
-            case JPEG: {
+            case JPEG:
+            case JPG: {
                 switch (fromType) {
                     case DWG:
                     case DXF: {
