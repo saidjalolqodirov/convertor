@@ -7,8 +7,11 @@ import uz.convertor.files.FileDto;
 import uz.convertor.files.FileType;
 import uz.convertor.files.FilesService;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/convertor")
@@ -25,7 +28,11 @@ public class ConvertorController {
     public ResponseEntity<?> upload(@RequestParam(name = "file") MultipartFile multipartFile,
                                     @RequestParam FileType fromType,
                                     @RequestParam FileType toType,
-                                    HttpServletRequest request) {
+                                    HttpServletRequest request,
+                                    HttpServletResponse response) {
+        if (request.getCookies() == null) {
+            setCookie(response);
+        }
         return convertorService.convert(request.getSession() == null ? "1" : request.getSession().getId(), multipartFile, fromType, toType);
     }
 
@@ -35,7 +42,8 @@ public class ConvertorController {
     }
 
     @GetMapping("/type_list")
-    public FileType[] typeList() {
+    public FileType[] typeList(HttpServletResponse response) {
+        setCookie(response);
         return FileType.values();
     }
 
@@ -78,5 +86,16 @@ public class ConvertorController {
     @DeleteMapping("/delete/{id}")
     public void delete(@PathVariable String id) {
         filesService.delete(id);
+    }
+
+    @GetMapping("/setCookie")
+    public String setCookie(HttpServletResponse response) {
+        Cookie cookie = new Cookie("sessionId", UUID.randomUUID().toString());
+        cookie.setMaxAge(60 * 60 * 24);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(false);
+        cookie.setPath("/");
+        response.addCookie(cookie);
+        return "Cookie set successfully!";
     }
 }
