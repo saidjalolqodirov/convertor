@@ -377,7 +377,7 @@ public class ConvertorService {
                     String filePath = filesService.getPathForUpload() + "/" + UUID.randomUUID() + ".jpeg";
                     renderer.process(document.getPages().get_Item(i), filePath);
                     addToZipFile(filePath, zos);
-                    new File(filePath).delete();
+                    new File(filePath).delete(); // Delete temporary PNG files after adding to ZIP
                 }
                 zos.close();
                 fos.close();
@@ -411,16 +411,12 @@ public class ConvertorService {
     private FileDto convertToDocFromPdf(MultipartFile multipartFile, FileType toType) {
         try {
             com.aspose.pdf.Document pdfDocument = new com.aspose.pdf.Document(multipartFile.getInputStream());
-            String extension = toType.equals(FileType.DOC) ? ".doc" : ".docx";
-            FileDto fileDto = uploadFile(extension, FileType.PDF, multipartFile.getOriginalFilename());
-            String filePath = fileDto.getFile_name();
-            System.out.println("Generated File Path: " + filePath);
-            com.aspose.pdf.SaveFormat saveFormat = toType.equals(FileType.DOC) ? com.aspose.pdf.SaveFormat.Doc : com.aspose.pdf.SaveFormat.DocX;
-            pdfDocument.save(filePath, saveFormat);
+            FileDto fileDto = uploadFile(toType.equals(FileType.DOC) ? ".doc" : ".docx", FileType.PDF, multipartFile.getOriginalFilename());
+            pdfDocument.save(fileDto.getFile_name(), toType.equals(FileType.DOC) ? com.aspose.pdf.SaveFormat.Doc : com.aspose.pdf.SaveFormat.DocX);
             filesService.addFileDto(fileDto);
             return fileDto;
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("e.getMessage() = " + e.getMessage());
         }
         return null;
     }
