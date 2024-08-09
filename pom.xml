@@ -17,7 +17,7 @@
     <description>convertor</description>
 
     <properties>
-        <java.version>17</java.version>
+        <java.version>11</java.version>
     </properties>
 
     <repositories>
@@ -128,6 +128,14 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>14</source>
+                    <target>14</target>
                 </configuration>
             </plugin>
         </plugins>
