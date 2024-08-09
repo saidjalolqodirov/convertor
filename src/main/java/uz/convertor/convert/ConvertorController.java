@@ -47,28 +47,28 @@ public class ConvertorController {
     @GetMapping("/access_type_list_by_type")
     public FileType[] typeList(@RequestParam FileType fileType) {
         switch (fileType) {
-            case DWG -> {
+            case DWG: {
                 return new FileType[]{FileType.DXF, FileType.PDF, FileType.PNG, FileType.JPEG};
             }
-            case DXF -> {
+            case DXF: {
                 return new FileType[]{FileType.DWG, FileType.PDF, FileType.PNG, FileType.JPEG};
             }
-            case PDF -> {
+            case PDF: {
                 return new FileType[]{FileType.PNG, FileType.JPEG, FileType.DOC, FileType.DOCX};
             }
-            case PNG -> {
+            case PNG: {
                 return new FileType[]{FileType.PDF, FileType.JPEG, FileType.DOC, FileType.DOCX};
             }
-            case JPEG -> {
+            case JPEG: {
                 return new FileType[]{FileType.PDF, FileType.PNG, FileType.DOC, FileType.DOCX};
             }
-            case DOC -> {
+            case DOC: {
                 return new FileType[]{FileType.PDF, FileType.PNG, FileType.JPEG, FileType.DOCX};
             }
-            case DOCX -> {
+            case DOCX: {
                 return new FileType[]{FileType.PDF, FileType.PNG, FileType.JPEG, FileType.DOC};
             }
-            default -> {
+            default: {
                 return new FileType[]{};
             }
         }

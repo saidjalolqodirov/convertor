@@ -61,14 +61,33 @@ public class FilesService {
 
             String extension = FileUtils.getExtensionFromFileName(file.getFile_name());
             switch (extension.toLowerCase()) {
-                case "pdf" -> headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
-                case "zip" -> headers.add(HttpHeaders.CONTENT_TYPE, "application/zip");
-                case "jpeg" -> headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg");
-                case "png" -> headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
-                case "doc" -> headers.add(HttpHeaders.CONTENT_TYPE, "application/msword");
-                case "docx" ->
-                        headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
-                default -> headers.add(HttpHeaders.CONTENT_TYPE, "application/octet-stream");
+                case "pdf": {
+                    headers.add(HttpHeaders.CONTENT_TYPE, "application/pdf");
+                    break;
+                }
+                case "zip": {
+                    headers.add(HttpHeaders.CONTENT_TYPE, "application/zip");
+                    break;
+                }
+                case "jpeg": {
+                    headers.add(HttpHeaders.CONTENT_TYPE, "image/jpeg");
+                    break;
+                }
+                case "png": {
+                    headers.add(HttpHeaders.CONTENT_TYPE, "image/png");
+                    break;
+                }
+                case "doc": {
+                    headers.add(HttpHeaders.CONTENT_TYPE, "application/msword");
+                    break;
+                }
+                case "docx": {
+                    headers.add(HttpHeaders.CONTENT_TYPE, "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+                    break;
+                }
+                default: {
+                    break;
+                }
             }
             return new ResponseEntity<>(fileAsResource, headers, HttpStatus.OK);
         } catch (Exception e) {
