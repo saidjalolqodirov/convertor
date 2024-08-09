@@ -30,9 +30,13 @@ public class FilesService {
     }
 
     public List<FileDto> getList(String sessionId) {
-        return fileDtoList.stream()
-                .filter(fileDto -> Objects.equals(sessionId, fileDto.getSessionId()))
-                .sorted((o1, o2) -> o2.getOrder() - o1.getOrder()).collect(Collectors.toList());
+        List<FileDto> response = new ArrayList<>();
+        fileDtoList.forEach(fileDto -> {
+            System.out.println("fileDto = " + fileDto);
+            if (fileDto.getSessionId().equals(sessionId))
+                response.add(fileDto);
+        });
+        return response;
     }
 
     public Integer size() {

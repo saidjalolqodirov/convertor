@@ -29,102 +29,106 @@ import java.util.zip.ZipOutputStream;
 @RequiredArgsConstructor
 public class ConvertorService {
     private final FilesService filesService;
-    private static String sessionId = "";
+    private String session = "";
 
     public ResponseEntity<?> convert(String sessionId, MultipartFile multipartFile, FileType fromType, FileType toType) {
-        if (!check(multipartFile, fromType, toType))
+        if (!check(multipartFile, fromType)) {
             return new ResponseEntity<>("File Type error", HttpStatus.BAD_REQUEST);
-        sessionId = sessionId;
-        switch (toType) {
-            case PDF: {
-                switch (fromType) {
-                    case JPEG:
-                    case JPG:
-                    case PNG: {
-                        return ResponseEntity.ok(convertToPdpFromImage(multipartFile, fromType));
-                    }
-                    case DOC:
-                    case DOCX: {
-                        return ResponseEntity.ok(convertToPdfFromDocAndDocx(multipartFile, fromType));
-                    }
-                    case DWG:
-                    case DXF: {
-                        return ResponseEntity.ok(convertToPdfFromDwgAndDxf(multipartFile, fromType));
-                    }
-                    default:
-                        return ResponseEntity.ok(new FileDto());
-                }
-            }
-            case PNG: {
-                switch (fromType) {
-                    case JPEG:
-                    case JPG: {
-                        return ResponseEntity.ok(convertToPngFromJpeg(multipartFile, fromType));
-                    }
-                    case PDF: {
-                        return ResponseEntity.ok(convertToPngFromPdf(multipartFile, fromType));
-                    }
-                    case DWG:
-                    case DXF: {
-                        return ResponseEntity.ok(convertToPngFromDwgDxf(multipartFile, fromType));
-                    }
-                    case DOCX:
-                    case DOC: {
-                        return ResponseEntity.ok(convertToPngFromDocDocx(multipartFile, fromType));
-                    }
-                }
-            }
-            case JPEG:
-            case JPG: {
-                switch (fromType) {
-                    case DWG:
-                    case DXF: {
-                        return ResponseEntity.ok(convertToJpegFromDwgDxf(multipartFile, fromType));
-                    }
-                    case DOC:
-                    case DOCX: {
-                        return ResponseEntity.ok(convertToJpegFromDocDocx(multipartFile, fromType));
-                    }
-                    case PDF: {
-                        return ResponseEntity.ok(convertToJpegFromPdf(multipartFile, fromType));
-                    }
-                    case PNG: {
-                        return ResponseEntity.ok(convertToJpegFromPng(multipartFile, fromType));
-                    }
-                }
-            }
-            case DOC:
-            case DOCX: {
-                switch (fromType) {
-                    case PDF: {
-                        return ResponseEntity.ok(convertToDocFromPdf(multipartFile, toType));
-                    }
-                    case PNG:
-                    case JPEG: {
-                        return ResponseEntity.ok(convertToDocFromPngJpeg(multipartFile, fromType, toType));
-                    }
-                    case DOC:
-                    case DOCX: {
-                        return ResponseEntity.ok(convertToDocFromDoc(multipartFile, fromType, toType));
-                    }
-                }
-            }
-            case DWG:
-            case DXF: {
-                switch (fromType) {
-                    case DXF: {
-                        return ResponseEntity.ok(convertToDwgFromDxf(multipartFile));
-                    }
-                    case DWG: {
-                        return ResponseEntity.ok(convertToDxfFromDwg(multipartFile));
-                    }
-                }
-            }
         }
-        return null;
+        this.session = sessionId;
+
+        if (toType == FileType.PDF) {
+            return convertToPdf(multipartFile, fromType);
+        } else if (toType == FileType.PNG) {
+            return convertToPng(multipartFile, fromType);
+        } else if (toType == FileType.JPEG || toType == FileType.JPG) {
+            return convertToJpeg(multipartFile, fromType);
+        } else if (toType == FileType.DOC || toType == FileType.DOCX) {
+            return convertToDocOrDocx(multipartFile, fromType, toType);
+        } else if (toType == FileType.DWG || toType == FileType.DXF) {
+            return convertToDwgOrDxf(multipartFile, fromType, toType);
+        }
+
+        return ResponseEntity.ok(new FileDto());
     }
 
-    private boolean check(MultipartFile multipartFile, FileType fromType, FileType toType) {
+    private ResponseEntity<?> convertToPdf(MultipartFile multipartFile, FileType fromType) {
+        switch (fromType) {
+            case JPEG:
+            case JPG:
+            case PNG:
+                return ResponseEntity.ok(convertToPdpFromImage(multipartFile, fromType));
+            case DOC:
+            case DOCX:
+                return ResponseEntity.ok(convertToPdfFromDocAndDocx(multipartFile, fromType));
+            case DWG:
+            case DXF:
+                return ResponseEntity.ok(convertToPdfFromDwgAndDxf(multipartFile, fromType));
+            default:
+                return ResponseEntity.ok(new FileDto());
+        }
+    }
+
+    private ResponseEntity<?> convertToPng(MultipartFile multipartFile, FileType fromType) {
+        switch (fromType) {
+            case JPEG:
+            case JPG:
+                return ResponseEntity.ok(convertToPngFromJpeg(multipartFile, fromType));
+            case PDF:
+                return ResponseEntity.ok(convertToPngFromPdf(multipartFile, fromType));
+            case DWG:
+            case DXF:
+                return ResponseEntity.ok(convertToPngFromDwgDxf(multipartFile, fromType));
+            case DOCX:
+            case DOC:
+                return ResponseEntity.ok(convertToPngFromDocDocx(multipartFile, fromType));
+            default:
+                return ResponseEntity.ok(new FileDto());
+        }
+    }
+
+    private ResponseEntity<?> convertToJpeg(MultipartFile multipartFile, FileType fromType) {
+        switch (fromType) {
+            case DWG:
+            case DXF:
+                return ResponseEntity.ok(convertToJpegFromDwgDxf(multipartFile, fromType));
+            case DOC:
+            case DOCX:
+                return ResponseEntity.ok(convertToJpegFromDocDocx(multipartFile, fromType));
+            case PDF:
+                return ResponseEntity.ok(convertToJpegFromPdf(multipartFile, fromType));
+            case PNG:
+                return ResponseEntity.ok(convertToJpegFromPng(multipartFile, fromType));
+            default:
+                return ResponseEntity.ok(new FileDto());
+        }
+    }
+
+    private ResponseEntity<?> convertToDocOrDocx(MultipartFile multipartFile, FileType fromType, FileType toType) {
+        switch (fromType) {
+            case PDF:
+                return ResponseEntity.ok(convertToDocFromPdf(multipartFile, toType));
+            case PNG:
+            case JPEG:
+                return ResponseEntity.ok(convertToDocFromPngJpeg(multipartFile, fromType, toType));
+            case DOC:
+            case DOCX:
+                return ResponseEntity.ok(convertToDocFromDoc(multipartFile, fromType, toType));
+            default:
+                return ResponseEntity.ok(new FileDto());
+        }
+    }
+
+    private ResponseEntity<?> convertToDwgOrDxf(MultipartFile multipartFile, FileType fromType, FileType toType) {
+        if (fromType == FileType.DXF && toType == FileType.DWG) {
+            return ResponseEntity.ok(convertToDwgFromDxf(multipartFile));
+        } else if (fromType == FileType.DWG && toType == FileType.DXF) {
+            return ResponseEntity.ok(convertToDxfFromDwg(multipartFile));
+        }
+        return ResponseEntity.ok(new FileDto());
+    }
+
+    private boolean check(MultipartFile multipartFile, FileType fromType) {
         String extension = FileUtils.getExtensionFromFileName(multipartFile.getOriginalFilename());
         return extension.toUpperCase().equals(fromType.name());
     }
@@ -343,7 +347,7 @@ public class ConvertorService {
                 String filePath = filesService.getPathForUpload() + "/" + UUID.randomUUID() + ".jpeg";
                 extractedPage.save(String.format(filePath, page + 1));
                 addToZipFile(filePath, zos);
-                new File(filePath).delete(); // Delete temporary PNG files after adding to ZIP
+                new File(filePath).delete();
             }
             zos.close();
             fos.close();
@@ -373,7 +377,7 @@ public class ConvertorService {
                     String filePath = filesService.getPathForUpload() + "/" + UUID.randomUUID() + ".jpeg";
                     renderer.process(document.getPages().get_Item(i), filePath);
                     addToZipFile(filePath, zos);
-                    new File(filePath).delete(); // Delete temporary PNG files after adding to ZIP
+                    new File(filePath).delete();
                 }
                 zos.close();
                 fos.close();
@@ -511,6 +515,6 @@ public class ConvertorService {
     private FileDto uploadFile(String extension, FileType fromType, String originalFilename) {
         String id = UUID.randomUUID().toString();
         String filePath = filesService.getPathForUpload() + "/" + id + extension;
-        return new FileDto(id, fromType, originalFilename, filePath, filesService.size() + 1, sessionId);
+        return new FileDto(id, fromType, originalFilename, filePath, filesService.size() + 1, this.session);
     }
 }
