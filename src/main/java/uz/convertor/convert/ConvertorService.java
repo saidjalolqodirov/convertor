@@ -411,12 +411,14 @@ public class ConvertorService {
     private FileDto convertToDocFromPdf(MultipartFile multipartFile, FileType toType) {
         try {
             com.aspose.pdf.Document pdfDocument = new com.aspose.pdf.Document(multipartFile.getInputStream());
-            FileDto fileDto = uploadFile(toType.equals(FileType.DOC) ? ".doc" : ".docx", FileType.PDF, multipartFile.getOriginalFilename());
+            String extension = toType.equals(FileType.DOC) ? ".doc" : ".docx";
+            FileDto fileDto = uploadFile(extension, FileType.PDF, multipartFile.getOriginalFilename());
             pdfDocument.save(fileDto.getFile_name(), toType.equals(FileType.DOC) ? com.aspose.pdf.SaveFormat.Doc : com.aspose.pdf.SaveFormat.DocX);
             filesService.addFileDto(fileDto);
             return fileDto;
         } catch (Exception e) {
-            System.out.println("e.getMessage() = " + e.getMessage());
+            System.out.println("Error Message: " + e.getMessage());
+            e.printStackTrace();
         }
         return null;
     }
